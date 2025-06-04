@@ -12,6 +12,8 @@ import {
   FaGraduationCap,
   FaHome
 } from "react-icons/fa";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -37,14 +39,36 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleLogout = () => {
+ const handleLogout = async () => {
+  try {
+    // First call the server logout endpoint to clear cookies
+    await axios.post(
+      `${import.meta.env.VITE_SERVER_URL}/api/auth/logout`, 
+      {}, 
+      { withCredentials: true }
+    );
+    
+    // Then clear client-side storage
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    setIsAuthenticated(false);
+    setUserRole(null);
+    setMobileMenuOpen(false);
+    
+    // Navigate to home
+    navigate("/");
+    toast.success("Logged out successfully");
+  } catch (error) {
+    console.error("Logout failed:", error);
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     setIsAuthenticated(false);
     setUserRole(null);
     setMobileMenuOpen(false);
     navigate("/");
-  };
+    toast.error("Logout completed on client side");
+  }
+};
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);

@@ -72,7 +72,7 @@ const CourseDetail: React.FC = () => {
   const navigate = useNavigate();
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error] = useState('');
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [enrolling, setEnrolling] = useState(false);
   const [showEnrollmentModal, setShowEnrollmentModal] = useState(false);
@@ -88,78 +88,50 @@ const CourseDetail: React.FC = () => {
     }).format(num);
   };
 
-  useEffect(() => {
-    const checkAuthStatus = async () => {
+useEffect(() => {
+  const fetchCourse = async () => {
+    try {
+      setLoading(true);
+      const toastId = toast.loading('Loading course details...');
+      
+      const courseResponse = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/api/courses/${id}`
+      );
+
+      if (courseResponse.data.success) {
+        setCourse(courseResponse.data.data);
+        toast.update(toastId, {
+          render: 'Course loaded successfully',
+          type: 'success',
+          isLoading: false,
+          autoClose: 2000
+        });
+      } else {
+        throw new Error(courseResponse.data.message || 'Failed to fetch course');
+      }
+
       try {
-        await axios.get(
-          `${import.meta.env.VITE_SERVER_URL}/api/auth/me`,
+        const enrollmentResponse = await axios.get(
+          `${import.meta.env.VITE_SERVER_URL}/api/courses/${id}/enrollment`,
           { withCredentials: true }
         );
-        setIsAuthenticated(true);
-      } catch (error) {
+        if (enrollmentResponse.data.success) {
+          setIsEnrolled(enrollmentResponse.data.isEnrolled);
+          setIsAuthenticated(true); 
+        }
+      } catch (enrollmentError) {
         setIsAuthenticated(false);
+        setIsEnrolled(false);
       }
-    };
+    } catch (error) {
+      // ... error handling
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const fetchCourse = async () => {
-      try {
-        setLoading(true);
-        const toastId = toast.loading('Loading course details...');
-        
-        // First check authentication status
-        await checkAuthStatus();
-        
-        // Then fetch course details
-        const courseResponse = await axios.get(
-          `${import.meta.env.VITE_SERVER_URL}/api/courses/${id}`
-        );
-
-        if (courseResponse.data.success) {
-          setCourse(courseResponse.data.data);
-          toast.update(toastId, {
-            render: 'Course loaded successfully',
-            type: 'success',
-            isLoading: false,
-            autoClose: 2000
-          });
-        } else {
-          throw new Error(courseResponse.data.message || 'Failed to fetch course');
-        }
-
-        // Only check enrollment if authenticated
-        if (isAuthenticated) {
-          try {
-            const enrollmentResponse = await axios.get(
-              `${import.meta.env.VITE_SERVER_URL}/api/courses/${id}/enrollment`,
-              { withCredentials: true }
-            );
-            if (enrollmentResponse.data.success) {
-              setIsEnrolled(enrollmentResponse.data.isEnrolled);
-            }
-          } catch (enrollmentError) {
-            // If there's an error checking enrollment, assume not enrolled
-            setIsEnrolled(false);
-          }
-        } else {
-          setIsEnrolled(false); // Explicitly set to false for non-authenticated users
-        }
-      } catch (error) {
-        const axiosError = error as AxiosError;
-        if (axiosError.response?.status === 404) {
-          setError('Course not found');
-          toast.error('Course not found');
-          navigate('/courses');
-        } else {
-          setError(axiosError.message);
-          toast.error('Failed to load course details');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourse();
-  }, [id, navigate, isAuthenticated]);
+  fetchCourse();
+}, [id, navigate]);
 
   const getOptimizedImageUrl = (imageInput: string | IThumbnail) => {
     if (typeof imageInput === 'string') {
@@ -249,13 +221,19 @@ const CourseDetail: React.FC = () => {
   };
 
   const handleLessonClick = (lesson: Lesson) => {
-    if (!isEnrolled) {
-      toast.info('Please enroll in the course to access lessons');
-      return;
-    }
-    // Navigate to lesson player
-    navigate(`/courses/${course?._id}/lessons/${lesson._id}`);
-  };
+  if (!isAuthenticated) {
+    toast.info('Please login to access this course');
+    navigate('/login', { state: { from: `/courses/${course?._id}` } });
+    return;
+  }
+  
+  if (!isEnrolled) {
+    toast.info('Please enroll in the course to access lessons');
+    return;
+  }
+  
+  navigate(`/courses/${course?._id}/lessons/${lesson._id}`);
+};
 
   if (loading) {
     return (
@@ -448,11 +426,16 @@ const CourseDetail: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center ml-2">
-                    {!isEnrolled && (
-                      <LockClosedIcon className="h-5 w-5 text-gray-400" />
-                    )}
-                  </div>
-                </div>
+    {!isEnrolled && (
+      <div className="flex items-center">
+        <LockClosedIcon className="h-5 w-5 text-gray-400 mr-2" />
+        <span className="text-sm text-gray-500">
+          {isAuthenticated ? 'Enroll to access' : 'Login to access'}
+        </span>
+      </div>
+    )}
+  </div>
+</div>
                 
                 {isEnrolled && lesson.resources && lesson.resources.length > 0 && (
                   <div className="mt-3 pl-13 sm:pl-14">
