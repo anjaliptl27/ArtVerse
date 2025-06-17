@@ -768,7 +768,7 @@ const ArtistDashboard = () => {
     labels: sales.monthlyEarnings.map((item) => item.month),
     datasets: [
       {
-        label: "Monthly Earnings ($)",
+        label: "Monthly Earnings (₹)",
         data: sales.monthlyEarnings.map((item) => item.amount),
         backgroundColor: "rgba(54, 162, 235, 0.5)",
         borderColor: "rgba(54, 162, 235, 1)",
@@ -897,7 +897,7 @@ const ArtistDashboard = () => {
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold mb-2">Total Sales</h3>
               <p className="text-2xl font-bold">
-                ${sales.totalSales.toLocaleString()}
+                ₹{sales.totalSales.toLocaleString()}
               </p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
@@ -1000,7 +1000,7 @@ const ArtistDashboard = () => {
                     )}
                   </div>
                   <h3 className="font-bold text-lg">{artwork.title}</h3>
-                  <p className="text-gray-600">${artwork.price}</p>
+                  <p className="text-gray-600">₹{artwork.price}</p>
                   <span
                     className={`inline-block mt-2 px-2 py-1 text-xs rounded ${
                       artwork.status === "approved"
@@ -1090,7 +1090,7 @@ const ArtistDashboard = () => {
             </div>
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
-                <label className="block text-gray-700 mb-2">Price ($)</label>
+                <label className="block text-gray-700 mb-2">Price (₹)</label>
                 <input
                   type="number"
                   value={artworkForm.price}
@@ -1264,7 +1264,7 @@ const ArtistDashboard = () => {
                                 </span>
                               </p>
                               <p className="text-sm">
-                                <span className="font-medium">Budget:</span> $
+                                <span className="font-medium">Budget:</span> ₹
                                 {commission.budget}
                               </p>
                               {commission.deadline && (
@@ -1325,7 +1325,7 @@ const ArtistDashboard = () => {
                       <p className="text-gray-600">{commission.description}</p>
                       <div className="mt-2">
                         <p className="text-sm">
-                          <span className="font-medium">Budget:</span> $
+                          <span className="font-medium">Budget:</span> ₹
                           {commission.budget}
                         </p>
                         {commission.deadline && (
@@ -1421,13 +1421,13 @@ const ArtistDashboard = () => {
                         <ul className="list-disc pl-5">
                           {order.items.map((item, i) => (
                             <li key={i} className="text-sm">
-                              {item.title} (${item.price})
+                              {item.title} (₹{item.price})
                             </li>
                           ))}
                         </ul>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        ${order.total}
+                        ₹{order.total}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(order.createdAt).toLocaleDateString()}
@@ -1513,7 +1513,7 @@ const ArtistDashboard = () => {
                         )}
                         <div>
                           <h2 className="text-xl font-bold">{course.title}</h2>
-                          <p className="text-gray-600 mt-1">${course.price}</p>
+                          <p className="text-gray-600 mt-1">₹{course.price}</p>
                           <div className="flex items-center mt-2 space-x-2">
                             <span
                               className={`px-2 py-1 text-xs rounded ${
@@ -1958,7 +1958,7 @@ const ArtistDashboard = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 mb-2">Price ($)</label>
+                  <label className="block text-gray-700 mb-2">Price (₹)</label>
                   <input
                     type="number"
                     value={courseForm.price}

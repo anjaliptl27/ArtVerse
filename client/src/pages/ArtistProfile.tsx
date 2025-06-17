@@ -740,7 +740,7 @@ const ArtistProfile = () => {
                             >
                               <div className="truncate">
                                 <span className="font-medium">{rate.type}: </span>
-                                <span>${rate.price.toFixed(2)}</span>
+                                <span>₹{rate.price.toFixed(2)}</span>
                                 {rate.description && (
                                   <span> - {rate.description}</span>
                                 )}
@@ -865,7 +865,7 @@ const ArtistProfile = () => {
                                     <span className="font-medium">
                                       {rate.type}:{" "}
                                     </span>
-                                    <span>${rate.price.toFixed(2)}</span>
+                                    <span>₹{rate.price.toFixed(2)}</span>
                                     {rate.description && (
                                       <span> - {rate.description}</span>
                                     )}
@@ -981,7 +981,7 @@ const ArtistProfile = () => {
                         <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
                           <div>
                             <p className="text-sm font-medium text-gray-900">
-                              ${commission.budget.toFixed(2)}
+                              ₹{commission.budget.toFixed(2)}
                             </p>
                             <p className="text-xs text-gray-500">Budget</p>
                           </div>
