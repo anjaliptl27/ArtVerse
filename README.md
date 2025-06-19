@@ -100,4 +100,4 @@ npm run dev
 3. Mobile App
 
 Anjali.  
-Developer, ArtVerse
+Developer, ArtVerse 💖
