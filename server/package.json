@@ -4,8 +4,8 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon",
-    "build": "npx tsc",
-    "start": "npx tsc && node ./dist/server.js",
+    "build": "tsc",
+    "start": "node ./dist/server.js",
     "test": "jest"
   },
   "keywords": [],
