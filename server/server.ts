@@ -56,7 +56,7 @@ app.get("/", (req,res)=>{
     res.send("Hello World!");
 })
 //start server
-const port = process.env.PORT || 5001;
+const port = Number(process.env.PORT) || 5001;
 app.listen(port, '0.0.0.0', () => {
-  console.log(`server listening on port ${port}`);
+  console.log(`Server listening on port ${port}`);
 });
